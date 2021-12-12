@@ -6,13 +6,12 @@ namespace AugustEngine.LowLevel
     using System;
 
 
-    public class UpdateEvent : Singleton<UpdateEvent>
+    public class FixedUpdateEvent : Singleton<UpdateEvent>
     {
 
-        public static Action OnUpdate;
+        public static Action OnFixedUpdate;
+
         // Update is called once per frame
-        void Update() => OnUpdate?.Invoke();
+        void FixedUpdate() => OnFixedUpdate?.Invoke();
     }
 }
-
-

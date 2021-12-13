@@ -33,6 +33,17 @@ namespace AugustEngine.Vectors
             return new Vector2(v.x, v.z);
         }
         /// <summary>
+        /// Clamps a vector to the maximum provided magnitude
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="magnitude"></param>
+        /// <returns></returns>
+        public static Vector3 ClampMagnitude(this Vector3 v, float magnitude)
+        {
+            if (v.magnitude <= magnitude) return v;
+            return v.normalized * magnitude;
+        }
+        /// <summary>
         /// creates a new random vector between the x and y components of the provided
         /// </summary>
         /// <param name="v"></param>

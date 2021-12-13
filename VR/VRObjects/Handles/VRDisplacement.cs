@@ -28,7 +28,7 @@ namespace AugustEngine.VR.VRObjects.Handles
             {
                 if (displacment != value)
                 {
-                    displacment = value;
+                    displacment = value.ClampMagnitude(maxMagnitude);
                     OnDisplacementChange?.Invoke(value);
                 }
             }
@@ -52,6 +52,18 @@ namespace AugustEngine.VR.VRObjects.Handles
         {
             //ensure the hook is activated
             if (LowLevel.UpdateEvent.Instance) { }
+
+            controller.selectAction.action.started += _ => Grab();
+            controller.selectAction.action.canceled += _ => Drop();
+
+
+
+        }
+
+        private void OnDisable()
+        {
+            controller.selectAction.action.started -= _ => Grab();
+            controller.selectAction.action.canceled -= _ => Drop();
         }
         private void UpdateDisplacement()
         {

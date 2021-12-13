@@ -80,9 +80,21 @@ namespace AugustEngine.Vectors
         /// </summary>
         /// <param name=""></param>
         /// <returns></returns>
-        public static Vector3 ToLocalSpace(this Vector3 v3, Transform localSpace)
+        public static Vector3 InLocalSpace(this Vector3 v3, Transform localSpace)
         {
             return (v3.x * localSpace.right + v3.y * localSpace.up + v3.z * localSpace.forward);
+        }
+        /// <summary>
+        /// Returns the vector 3 in world space in
+        /// terms of the provided transform
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns></returns>
+        public static Vector3 ToLocalSpace(this Vector3 v3, Transform localSpace)
+        {
+            return new Vector3(v3.x * Vector3.Dot(v3, localSpace.right),
+                                v3.y * Vector3.Dot(v3, localSpace.up),
+                                v3.z * Vector3.Dot(v3, localSpace.forward));
         }
         /// <summary>
         /// Returns the vector 2 in world space in

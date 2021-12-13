@@ -11,9 +11,9 @@ namespace AugustEngine.VR.VRObjects.Handles
     using System;
     using UnityEngine.XR.Interaction.Toolkit;
     using Vectors;
-    public class VirtualJoystick : MonoBehaviour
+    public class VRDisplacement : MonoBehaviour
     {
-        [SerializeField] [Tooltip("What controller interacts with this?")] XRController controller;
+        [SerializeField] [Tooltip("What controller interacts with this?")] ActionBasedController controller;
         [SerializeField] [Tooltip("The vector should be not larger than")] float maxMagnitude = 1f;
         [SerializeField] [Tooltip("Multiply the real-world displacement by")] float multiplier = 1f;
         [SerializeField] [Tooltip("In the space of what")] Transform localSpace;
@@ -34,17 +34,18 @@ namespace AugustEngine.VR.VRObjects.Handles
             }
         }
         private Vector3 ControllerPos { get => controller.transform.position; }
-        private Vector3 offset;
         public void Grab()
         {
             //move the offset to the place we started at
             offsetOrigin.position = ControllerPos;
-
+            controller.SendHapticImpulse(.5f, .25f);
             LowLevel.UpdateEvent.OnUpdate += UpdateDisplacement;
         }
         public void Drop()
         {
+
             Displacemnt = Vector3.zero;
+            controller.SendHapticImpulse(.15f, .15f);
             LowLevel.UpdateEvent.OnUpdate -= UpdateDisplacement;
         }
         private void OnEnable()

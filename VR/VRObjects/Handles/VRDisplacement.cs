@@ -67,9 +67,10 @@ namespace AugustEngine.VR.VRObjects.Handles
         }
         private void UpdateDisplacement()
         {
+
             //calcuate the displacement in local space
-            Displacemnt = (offsetOrigin.position.To(ControllerPos) * multiplier)
-                .ToLocalSpace(localSpace);
+
+            Displacemnt = (offsetOrigin.position.To(ControllerPos) * multiplier).ToLocalDirection(localSpace);
         }
     }
 

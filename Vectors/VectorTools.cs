@@ -38,6 +38,17 @@ namespace AugustEngine.Vectors
         /// <param name="v"></param>
         /// <param name="magnitude"></param>
         /// <returns></returns>
+        public static Vector2 ClampMagnitude(this Vector2 v, float magnitude)
+        {
+            if (v.magnitude <= magnitude) return v;
+            return v.normalized * magnitude;
+        }
+        /// <summary>
+        /// Clamps a vector to the maximum provided magnitude
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="magnitude"></param>
+        /// <returns></returns>
         public static Vector3 ClampMagnitude(this Vector3 v, float magnitude)
         {
             if (v.magnitude <= magnitude) return v;
@@ -80,9 +91,10 @@ namespace AugustEngine.Vectors
         /// </summary>
         /// <param name=""></param>
         /// <returns></returns>
-        public static Vector3 InLocalSpace(this Vector3 v3, Transform localSpace)
+        public static Vector3 ToLocalCoordinates(this Vector3 v3, Transform localSpace)
         {
-            return (v3.x * localSpace.right + v3.y * localSpace.up + v3.z * localSpace.forward);
+            return localSpace.InverseTransformPoint(v3);
+
         }
         /// <summary>
         /// Returns the vector 3 in world space in
@@ -90,11 +102,10 @@ namespace AugustEngine.Vectors
         /// </summary>
         /// <param name=""></param>
         /// <returns></returns>
-        public static Vector3 ToLocalSpace(this Vector3 v3, Transform localSpace)
+        public static Vector3 ToLocalDirection(this Vector3 v3, Transform localSpace)
         {
-            return new Vector3(v3.x * Vector3.Dot(v3, localSpace.right),
-                                v3.y * Vector3.Dot(v3, localSpace.up),
-                                v3.z * Vector3.Dot(v3, localSpace.forward));
+
+            return localSpace.InverseTransformDirection(v3);
         }
         /// <summary>
         /// Returns the vector 2 in world space in

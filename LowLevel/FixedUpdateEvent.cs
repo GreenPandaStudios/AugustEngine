@@ -6,7 +6,7 @@ namespace AugustEngine.LowLevel
     using System;
 
 
-    public class FixedUpdateEvent : Singleton<UpdateEvent>
+    public class FixedUpdateEvent : Singleton<FixedUpdateEvent>
     {
 
         public static Action OnFixedUpdate;

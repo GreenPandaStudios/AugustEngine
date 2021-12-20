@@ -1,4 +1,4 @@
-namespace AugustEngine.Phyics
+namespace AugustEngine.Physics
 {
 
 

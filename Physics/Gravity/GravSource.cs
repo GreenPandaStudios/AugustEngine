@@ -1,4 +1,4 @@
-namespace AugustEngine.Phyics.Gravity
+namespace AugustEngine.Physics.Gravity
 {
 
     /// A source of gravity that will effect <seealso cref="GravEffected"/>
@@ -73,8 +73,17 @@ namespace AugustEngine.Phyics.Gravity
 
         private void AddGravForce()
         {
+            var markedForRemoval = new List<GravEffected>();
+
+
             foreach (GravEffected gravEffected in effected)
             {
+                if (gravEffected == null)
+                {
+                    markedForRemoval.Add(gravEffected);
+                    continue;
+                }
+
                 var _dist = centerOfMass.position.From(gravEffected.RB.position);
                 var _mag = _dist.sqrMagnitude;
 
@@ -86,6 +95,10 @@ namespace AugustEngine.Phyics.Gravity
                     (gravConst / _mag)
                     );
             }
+
+            //remove null ones
+            foreach (GravEffected g in markedForRemoval) effected.Remove(g);
+
         }
 
 

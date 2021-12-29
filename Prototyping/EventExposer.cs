@@ -10,7 +10,7 @@ namespace AugustEngine.Prototyping
     /// </summary>
     public class EventExposer : MonoBehaviour
     {
-        public void Destroy() => Destroy(this);
+        public void Destroy() => Destroy(gameObject);
 
     }
 }

@@ -18,18 +18,30 @@ namespace AugustEngine.Physics
             if (other.CompareTag("InvertedCollider"))
             {
                 //we have exited an inverted collider, move to the edge
-                rb.transform.position = other.ClosestPoint(rb.transform.position);
+                rb.transform.position = other.ClosestPoint(rb.transform.position) - rb.velocity * Time.fixedDeltaTime;
 
                 //get the physics material
                 //is there a rigidbody?
                 Physics.Raycast(rb.position, rb.velocity, out var _hit, 1f, other.gameObject.layer, QueryTriggerInteraction.Collide);
-                rb.velocity = Vector3.Reflect(rb.velocity * other.sharedMaterial.bounciness, _hit.normal);
+                rb.velocity = Vector3.Reflect(rb.velocity * (other.sharedMaterial == null ? .1f : other.sharedMaterial.bounciness), _hit.normal);
+
                 if (other.attachedRigidbody)
                 {
-                    rb.velocity += other.attachedRigidbody.velocity * Mathf.Abs(Vector3.Dot(rb.velocity, _hit.normal)) * other.sharedMaterial.bounciness
-                         + other.attachedRigidbody.velocity * (1f - Mathf.Abs(Vector3.Dot(rb.velocity, _hit.normal))) * other.sharedMaterial.dynamicFriction;
+                    rb.velocity += other.attachedRigidbody.velocity * Mathf.Abs(Vector3.Dot(rb.velocity, _hit.normal)) *
+                        (other.sharedMaterial == null ? .1f : other.sharedMaterial.bounciness)
+                         + other.attachedRigidbody.velocity * (1f - Mathf.Abs(Vector3.Dot(rb.velocity, _hit.normal))) *
+                         (other.sharedMaterial == null ? .1f : other.sharedMaterial.dynamicFriction);
+
                 }
+
             }
         }
+
+
+
     }
+
+
+
+
 }

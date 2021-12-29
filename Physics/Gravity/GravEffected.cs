@@ -1,4 +1,4 @@
-namespace AugustEngine.Phyics.Gravity
+namespace AugustEngine.Physics.Gravity
 {
     using System.Collections;
     using System.Collections.Generic;
@@ -11,5 +11,6 @@ namespace AugustEngine.Phyics.Gravity
         Rigidbody rb;
 
         public Rigidbody RB { get => rb; }
+
     }
 }

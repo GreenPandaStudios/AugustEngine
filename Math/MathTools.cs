@@ -5,7 +5,7 @@ namespace AugustEngine.Math
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
-
+    using AugustEngine.Vectors;
     public static class MathTools
     {
         /// <summary>

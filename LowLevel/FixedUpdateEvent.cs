@@ -8,7 +8,9 @@ namespace AugustEngine.LowLevel
 
     public class FixedUpdateEvent : Singleton<FixedUpdateEvent>
     {
-
+        /// <summary>
+        /// Event thrown on the unity engine's fixed update call
+        /// </summary>
         public static Action OnFixedUpdate;
 
 

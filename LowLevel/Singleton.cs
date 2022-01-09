@@ -9,7 +9,13 @@ namespace AugustEngine.LowLevel
     /// <typeparam name="T">type of singelton</typeparam>
     public class Singleton<T> : MonoBehaviour where T : UnityEngine.Component
     {
-
+        /// <summary>
+        /// Must be called at least once to initialize the singleton
+        /// </summary>
+        public static void Initialize()
+        {
+            if (Instance) { }
+        }
         public static T Instance
         {
             get

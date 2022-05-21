@@ -146,5 +146,278 @@ namespace AugustEngine.Vectors
         {
             return v3 - from;
         }
+        /// <summary>
+        /// Returns the vector 3 as a direction according to the cameraSpace
+        /// As projected on the up plane
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns></returns>
+        public static Vector3 ToCameraSpace(this Vector3 v3, Transform cameraSpace)
+        {
+            return  v3.x * Vector3.ProjectOnPlane(cameraSpace.right, Vector3.up).normalized +
+                    v3.y * Vector3.up +
+                     v3.z * Vector3.ProjectOnPlane(cameraSpace.forward, Vector3.up).normalized
+                    ;
+        }
     }
+
+   /// <summary>
+   /// A double precision Vector3
+   /// </summary>
+    public class Vector3Double
+    {
+       
+        public double x, y, z;
+        public Vector3Double(double x, double y, double z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+           
+        }
+        public static Vector3Double Zero
+        {
+            get=> new Vector3Double(0,0,0);
+        }
+        public static Vector3Double One
+        {
+            get => new Vector3Double(1, 1, 1);
+        }
+        public static Vector3Double Up
+        {
+            get => new Vector3Double(1, 0, 0);
+        }
+        public static Vector3Double Right
+        {
+            get => new Vector3Double(1, 0, 0);
+        }
+        public static Vector3Double Forward
+        {
+            get => new Vector3Double(0, 0, 1);
+        }
+
+        /// <summary>
+        /// Returs the squared magnitude of the vector
+        /// </summary>
+        public double SqrMagnitude
+        {
+            get
+            {
+                return x * x + y * y + z * z;
+            }
+
+        }
+        /// <summary>
+        /// Returs the  magnitude of the vector
+        /// </summary>
+        public double Magnitude
+        {
+            get
+            {
+                return System.Math.Sqrt(SqrMagnitude);
+            }
+
+        }
+
+        /// <summary>
+        /// Returs the  magnitude of the vector
+        /// </summary>
+        public Vector3Double Normalized
+        {
+            get
+            {
+                return this / Magnitude;
+            }
+
+        }
+        /// <summary>
+        /// Returns the dot product of the two vectors
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static double Dot(Vector3Double v1, Vector3Double v2)
+        {
+            return  v1.x * v2.x + 
+                    v1.y * v2.y + 
+                    v1.z * v2.z;
+        }
+        //OPERATOR OVERLOADS
+        public static Vector3Double operator *(Vector3Double v1, double v2)
+        {
+            return new Vector3Double(v1.x * v2, v1.y * v2, v1.z * v2);
+        }
+        public static Vector3Double operator /(Vector3Double v1, double v2)
+        {
+            return new Vector3Double(v1.x / v2, v1.y / v2, v1.z / v2);
+        }
+        public static Vector3Double operator *(double v2, Vector3Double v1)
+        {
+            return new Vector3Double(v1.x * v2, v1.y * v2, v1.z * v2);
+        }
+        public static Vector3Double operator +(Vector3Double v1, Vector3Double v2)
+        {
+            return new Vector3Double(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
+        }
+        public static Vector3Double operator -(Vector3Double v1)
+        {
+            return new Vector3Double(-v1.x, -v1.y, -v1.z);
+        }
+        public static Vector3Double operator -(Vector3Double v1, Vector3Double v2)
+        {
+            return v1 + -v2;
+        }
+        public static implicit operator Vector3Double(Vector3 v1)
+        {
+            return new Vector3Double(v1.x, v1.y, v1.z);
+        }
+        public static bool operator ==(Vector3Double v1, Vector3Double v2)
+        {
+            return v1.Equals(v2);
+        }
+        public static bool operator !=(Vector3Double v1, Vector3Double v2)
+        {
+            return !v1.Equals(v2);
+        }
+        public override bool Equals(object v)
+        {
+            if (v is Vector3Double)
+            {
+                return x == ((Vector3Double)v).x && y == ((Vector3Double)v).y && z == ((Vector3Double)v).z;
+            }
+            if (v is Vector3)
+            {
+                return (float)x == ((Vector3)v).x && (float)y == ((Vector3)v).y && (float)z == ((Vector3)v).z;
+            }
+            return false;
+
+        }
+
+    }
+    /// <summary>
+    /// A double precision Vector2
+    /// </summary>
+    public class Vector2Double
+    {
+        public double x, y;
+
+        public Vector2Double(double x, double y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+        public static Vector2Double Zero
+        {
+            get => new Vector2Double(0, 0);
+        }
+        public static Vector2Double One
+        {
+            get => new Vector2Double(1, 1);
+        }
+        public static Vector2Double Up
+        {
+            get => new Vector2Double(1, 0);
+        }
+        public static Vector2Double Right
+        {
+            get => new Vector2Double(1, 0);
+        }
+
+
+        /// <summary>
+        /// Returs the squared magnitude of the vector
+        /// </summary>
+        public double SqrMagnitude
+        {
+            get
+            {
+                return x * x + y * y;
+            }
+
+        }
+        /// <summary>
+        /// Returs the  magnitude of the vector
+        /// </summary>
+        public double Magnitude
+        {
+            get
+            {
+                return System.Math.Sqrt(SqrMagnitude);
+            }
+
+        }
+        /// <summary>
+        /// Returs the  magnitude of the vector
+        /// </summary>
+        public Vector2Double Normalized
+        {
+            get
+            {
+                return this / Magnitude;
+            }
+
+        }
+        /// <summary>
+        /// Returns the dot product of the two vectors
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static double Dot(Vector2Double v1, Vector2Double v2)
+        {
+            return v1.x * v2.x +
+                    v1.y * v2.y;
+        }
+        //OPERATOR OVERLOADS
+        public static Vector2Double operator *(Vector2Double v1, double v2)
+        {
+            return new Vector2Double(v1.x * v2, v1.y * v2);
+        }
+        public static Vector2Double operator /(Vector2Double v1, double v2)
+        {
+            return new Vector2Double(v1.x / v2, v1.y / v2);
+        }
+        public static Vector2Double operator *(double v2, Vector2Double v1)
+        {
+            return new Vector2Double(v1.x * v2, v1.y * v2);
+        }
+        public static Vector2Double operator +(Vector2Double v1, Vector2Double v2)
+        {
+            return new Vector2Double(v1.x + v2.x, v1.y + v2.y);
+        }
+        public static Vector2Double operator -(Vector2Double v1)
+        {
+            return new Vector2Double(-v1.x, -v1.y);
+        }
+        public static Vector2Double operator -(Vector2Double v1, Vector2Double v2)
+        {
+            return v1 + -v2;
+        }
+        public static bool operator ==(Vector2Double v1, Vector2Double v2)
+        {
+            return v1.Equals(v2);
+        }
+        public static bool operator !=(Vector2Double v1, Vector2Double v2)
+        {
+            return !v1.Equals(v2);
+        }
+        public static implicit operator Vector2Double(Vector2 v1)
+        {
+            return new Vector2Double(v1.x, v1.y);
+        }
+        public override bool Equals(object v)
+        {
+            if (v is Vector2Double)
+            {
+                return x == ((Vector2Double)v).x && y == ((Vector2Double)v).y;
+            }
+            if (v is Vector2)
+            {
+                return (float)x == ((Vector2)v).x && (float)y == ((Vector2)v).y;
+            }
+            return false;
+
+        }
+    }
+
 }

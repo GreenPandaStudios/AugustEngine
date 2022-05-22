@@ -61,6 +61,24 @@ namespace AugustEngine.Procedural
                 return WarpedNoise(x+ _str, y + _str, scale);
             }
         }
+        public static float GridNoise(float x, float y, float scale = 1, float warpSize = 0, float warpStrength = 0)
+        {
+            float width = 20f;
+            float gap = 4f;
+            if (warpSize <= 0 || warpStrength <= 0)
+            {
+                return Mathf.Lerp(
+                        1f-Mathf.Max(gap*Mathf.Cos(x/ width) + 1f -gap, 0f),
+ 
+                    WarpedNoise(x, y, scale), 0.5f
+                    );
+            }
+            else
+            {
+                var _str = warpStrength * WarpedNoise(warpSize * x, warpSize * y, scale);
+                return GridNoise(x + _str, y + _str, scale);
+            }
+        }
         public static float HillyNoise(float x, float y, float scale = 1, float warpSize = 0, float warpStrength = 0)
         {
             if (warpSize <= 0 || warpStrength <= 0)
@@ -87,6 +105,25 @@ namespace AugustEngine.Procedural
              
             }
         }
+        public static long SquirrelNoise(int position, long seed = 0)
+        {
+            const long BIT_NOISE1 = 0xB5297A4D;
+            const long BIT_NOISE2 = 0x68E31DA4;
+            const long BIT_NOISE3 = 0x1B56C4E9;
+
+            long mangled = position;
+            mangled *= BIT_NOISE1;
+            mangled += seed;
+            mangled ^= seed;
+            mangled += BIT_NOISE2;
+            mangled ^= (mangled << 8);
+            mangled *= BIT_NOISE3;
+            mangled ^= (mangled >> 8);
+            return mangled;
+        }
+
+
+
         void OnEnable()
         {
             CalcNoise(rec);

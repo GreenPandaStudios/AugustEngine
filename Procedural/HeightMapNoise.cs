@@ -14,6 +14,10 @@ namespace AugustEngine.Procedural
 
         public static float EvaluatePoint(NoiseGeneration.NoiseData noiseData, float x, float y)
         {
+
+            
+
+
             if (noiseData.useGlobalOffset)
             {
                 x += (float) InfiniteWorldTransform.GlobalOffset.x;
@@ -27,16 +31,21 @@ namespace AugustEngine.Procedural
             float landmass = (Mathf.Cos(x * noiseData.scale /FEEL_TO_SCALE_RATIO) + Mathf.Cos(y * noiseData.scale / FEEL_TO_SCALE_RATIO))/2;
 
             //first, generate the overall "feel" of the land, this should be 10 times less than the scale
-            float feel1 = NoiseGeneration.WarpedNoise(x, y, noiseData.scale / FEEL_TO_SCALE_RATIO/10f, 1000, .95f);
-            float feel2 = NoiseGeneration.HillyNoise(x, y, noiseData.scale /10f, 50, .95f);
+            float feel1 = NoiseGeneration.WarpedNoise(x, y, noiseData.scale / FEEL_TO_SCALE_RATIO/10f, 100, 100f);
+            float feel2 = NoiseGeneration.WarpedNoise(x, y, noiseData.scale /25f, 50, 5f);
 
             //float feel2
 
 
+            
+            return (noiseData.heightScale * (0.5f - (feel1 * .95f + feel2*.05f)))
+             
 
-            return (noiseData.heightScale * (0.5f - (feel1 * .95f + feel2*.05f))) -
+                -
                 (noiseData.useGlobalOffset ?
                (float)InfiniteWorldTransform.GlobalOffset.y : 0f);
+            
+          
         }
         public override float EvaluatePoint(float x, float y) => EvaluatePoint(data, x, y);
        

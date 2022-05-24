@@ -175,6 +175,11 @@ namespace AugustEngine.Vectors
             this.z = z;
            
         }
+        public override int GetHashCode()
+        {
+            return (int) Procedural.NoiseGeneration.SquirrelNoise((int)x + (int)y * (int)y * ((int)z + 31) * (int)x,
+                (long)x+(long)y+(long)z);
+        }
         public static Vector3Double Zero
         {
             get=> new Vector3Double(0,0,0);
@@ -294,6 +299,8 @@ namespace AugustEngine.Vectors
         }
 
     }
+
+
     /// <summary>
     /// A double precision Vector2
     /// </summary>
@@ -401,7 +408,7 @@ namespace AugustEngine.Vectors
         {
             return !v1.Equals(v2);
         }
-        public static implicit operator Vector2Double(Vector2 v1)
+        public static implicit operator Vector2Double(UnityEngine.Vector2 v1)
         {
             return new Vector2Double(v1.x, v1.y);
         }
@@ -411,13 +418,20 @@ namespace AugustEngine.Vectors
             {
                 return x == ((Vector2Double)v).x && y == ((Vector2Double)v).y;
             }
-            if (v is Vector2)
+            if (v is UnityEngine.Vector2)
             {
-                return (float)x == ((Vector2)v).x && (float)y == ((Vector2)v).y;
+                return (float)x == ((UnityEngine.Vector2)v).x && (float)y == ((UnityEngine.Vector2)v).y;
             }
             return false;
 
         }
+        public override int GetHashCode()
+        {
+            return (int)Procedural.NoiseGeneration.SquirrelNoise((int)x + (int)y * (int)y + 31 * (int)x,
+                (long)x + (long)y);
+        }
+    
     }
 
 }
+

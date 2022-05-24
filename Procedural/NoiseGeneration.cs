@@ -105,6 +105,10 @@ namespace AugustEngine.Procedural
              
             }
         }
+        /// <summary>
+        /// A fast and reliable way for generating
+        /// seeded and deterministic noise
+        /// </summary>
         public static long SquirrelNoise(int position, long seed = 0)
         {
             const long BIT_NOISE1 = 0xB5297A4D;

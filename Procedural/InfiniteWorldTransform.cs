@@ -12,6 +12,9 @@ namespace AugustEngine.Procedural
     /// </summary>
     public class InfiniteWorldTransform : MonoBehaviour
     {
+
+
+
         protected static ChangeListener<Vector3Double> globalOffset = new ChangeListener<Vector3Double>(Vector3Double.Zero);
         protected static Action<Vector3Double> shiftByAmount;
         public static Vector3Double GlobalOffset
@@ -38,7 +41,9 @@ namespace AugustEngine.Procedural
         }
         private void OnEnable()
         {
+            Shift(Vector3.zero);
             shiftByAmount += Shift;
+           
         }
         private void OnDisable()
         {
@@ -47,7 +52,7 @@ namespace AugustEngine.Procedural
 
         private void Shift(Vector3Double shift)
         {
-            position -= shift;
+            position = shift;
         }
     }
 }

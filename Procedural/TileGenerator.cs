@@ -27,6 +27,7 @@ namespace AugustEngine.Procedural
         /// </summary>
         public void UpdateVerts()
         {
+            
             Vector3[] verts = meshFilter.mesh.vertices;
             Vector2[] temps = new Vector2[verts.Length];
 
@@ -34,20 +35,20 @@ namespace AugustEngine.Procedural
             NativeArray<Vector2> native_locations = new NativeArray<Vector2>(verts.Length, Allocator.TempJob);
             NativeArray<float> native_temps = new NativeArray<float>(verts.Length, Allocator.TempJob);
 
-
+            
             for (int i = 0; i < verts.Length; i++)
             {
                 native_locations[i] =
-                    new Vector2(origin.TransformPoint(verts[i]).x 
+                    new Vector2(origin.TransformPoint(verts[i]).x
                    , origin.TransformPoint(verts[i]).z
                    );
 
                 native_verts[i] = verts[i];
-                   
+
             }
 
             UpdateTileJob heightMapJob = new UpdateTileJob();
-            
+
             heightMapJob.verts = native_verts;
             heightMapJob.locations = native_locations;
             heightMapJob.temps = native_temps;
@@ -58,19 +59,19 @@ namespace AugustEngine.Procedural
             heightMapJob.tempNoiseData.heightScale = 1f;
 
             JobHandle heightHandler = heightMapJob.Schedule();
-           
+
             heightHandler.Complete();
 
             for (int i = 0; i < verts.Length; i++)
             {
                 verts[i] = native_verts[i];
-                temps[i] = new Vector2(0,native_temps[i]);
+                temps[i] = new Vector2(0, native_temps[i]);
             }
             //dispose mem
             native_verts.Dispose();
             native_locations.Dispose();
             native_temps.Dispose();
-            
+
 
             meshFilter.mesh.vertices = verts;
             meshFilter.mesh.uv2 = temps;
@@ -82,14 +83,15 @@ namespace AugustEngine.Procedural
                     MeshColliderCookingOptions.WeldColocatedVertices
                     |
                     MeshColliderCookingOptions.EnableMeshCleaning;
-                
+
                 meshCollider.sharedMesh = meshFilter.mesh;
                 meshCollider.sharedMesh.MarkDynamic();
                 meshCollider.sharedMesh.Optimize();
             }
-            
-
         }
+
+
+
 
         /// <summary>
         /// Job struct used for scheduling a tile update

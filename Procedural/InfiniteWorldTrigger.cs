@@ -9,6 +9,8 @@ namespace AugustEngine.Procedural
         [SerializeField] Vector2 xBounds = new Vector2(-500,500);
         [SerializeField] Vector2 yBounds = new Vector2(-500, 500);
         [SerializeField] Vector2 zBounds = new Vector2(-500, 500);
+        [SerializeField] bool useY = false;
+        [SerializeField] uint gridSize = 500;
         private void Update()
         {
             if (transform.position.x < xBounds.x ||
@@ -17,9 +19,16 @@ namespace AugustEngine.Procedural
                 transform.position.x > xBounds.y ||
                 transform.position.y > yBounds.y ||
                 transform.position.z > zBounds.y )
-            {                
-                globalOffset.Value += transform.position;
-                shiftByAmount?.Invoke(transform.position);
+            {
+
+                var _griddedVec = new Vector3(
+                    Mathf.RoundToInt(transform.position.x / gridSize) * gridSize,
+                    useY ? Mathf.RoundToInt(transform.position.y / gridSize) * gridSize : 0,
+                    Mathf.RoundToInt(transform.position.z / gridSize) * gridSize
+                    );
+
+                globalOffset.Value += _griddedVec;
+                shiftByAmount?.Invoke(_griddedVec);
                 TileGenerator.RequestUpdateTile?.Invoke();
             }
         }

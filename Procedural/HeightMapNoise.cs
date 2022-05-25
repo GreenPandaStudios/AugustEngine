@@ -30,19 +30,19 @@ namespace AugustEngine.Procedural
             y -= _offsY;
             
             
-            float landmass = (Mathf.Cos(x * noiseData.scale /FEEL_TO_SCALE_RATIO) + Mathf.Cos(y * noiseData.scale / FEEL_TO_SCALE_RATIO))/2;
+           
 
             //first, generate the overall "feel" of the land, this should be 10 times less than the scale
-            float feel1 = Mathf.Pow(NoiseGeneration.WarpedNoise(x, y, noiseData.scale / FEEL_TO_SCALE_RATIO / 20f, 100, 100f),3);
-            float feel2 = Mathf.Pow(NoiseGeneration.WarpedNoise(y, x, noiseData.scale / FEEL_TO_SCALE_RATIO / 10f, 50, 5f), 2);
-            float feel3 = Mathf.Pow(NoiseGeneration.WarpedNoise(x, y, noiseData.scale / FEEL_TO_SCALE_RATIO / 5f, 50, 5f), 1.5f);
+            float feel1 = NoiseGeneration.WarpedNoise(x, y, noiseData.scale / FEEL_TO_SCALE_RATIO / 20f, 100, 100f);
+            float feel2 = NoiseGeneration.WarpedNoise(y, x, noiseData.scale / FEEL_TO_SCALE_RATIO / 10f, 50, 5f);
+            float feel3 = Mathf.Pow(NoiseGeneration.WarpedNoise(x, y, noiseData.scale / FEEL_TO_SCALE_RATIO / 5f, 50, 5f), 2f);
             float feel4 = NoiseGeneration.WarpedNoise(y, x, noiseData.scale / FEEL_TO_SCALE_RATIO / 2f, 50, 5f);
 
             //float feel2
 
 
 
-            return (noiseData.heightScale * (0.5f - (feel1 * .6f + feel2 * .3f + feel3 * .075f + feel4 * .025f))) -
+            return (noiseData.heightScale * (0.5f - (feel1 * .95f + feel2 * .3f + feel3 * .1f + feel4 * .1f))) -
                 (noiseData.useGlobalOffset ?
                (float)InfiniteWorldTransform.GlobalOffset.y : 0f);
 

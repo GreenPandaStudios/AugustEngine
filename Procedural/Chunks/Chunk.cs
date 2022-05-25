@@ -17,7 +17,7 @@ namespace AugustEngine.Procedural.Chunks
         }
         public Action<Chunk, ChunkState> OnStateChange;
         private Vector2Int chunkPosition;
-        public Vector2Int ChunkPosition { get => ChunkPosition; }
+        public Vector2Int ChunkPosition { get => chunkPosition; private set { chunkPosition = value; } }
 
         private ChunkState state = ChunkState.Disabled;
         public ChunkState State { get => state;
@@ -27,15 +27,18 @@ namespace AugustEngine.Procedural.Chunks
                 OnStateChange?.Invoke(this, value);
             }
         }
+        public bool generatePhysics = true;
 
         private MeshFilter filter;
+        public MeshFilter Filter { get => filter; }
         private MeshRenderer meshRenderer;
+        public MeshRenderer Renderer { get => meshRenderer; }
         private MeshCollider meshCollider;
         public Material material;
         private void OnEnable()
         {
 
-            state = ChunkState.Ready;
+            State = ChunkState.Ready;
         }
 
         /// <summary>
@@ -46,7 +49,7 @@ namespace AugustEngine.Procedural.Chunks
         /// <returns></returns>
         public bool Generate(GenerateChunkJob chunkJob)
         {
-            if (state != ChunkState.Ready)
+            if (State != ChunkState.Ready)
             {
                 return false;
             }
@@ -54,18 +57,22 @@ namespace AugustEngine.Procedural.Chunks
             state = ChunkState.Generating;
             
             //add a mesh filter, renderer, and collider
-            if (filter) Destroy(filter);
-            filter = gameObject.AddComponent<MeshFilter>();
+            if (!filter) 
+                filter = gameObject.AddComponent<MeshFilter>();
             
-            if (meshRenderer) Destroy(meshRenderer);
-            meshRenderer = gameObject.AddComponent<MeshRenderer>();
+            if (!meshRenderer)
+                meshRenderer = gameObject.AddComponent<MeshRenderer>();
+                
+            
             meshRenderer.sharedMaterial = material;
 
-            if (meshCollider) Destroy(meshCollider);
-            meshCollider = gameObject.AddComponent<MeshCollider>();
+            if (generatePhysics && !meshCollider) 
+                meshCollider = gameObject.AddComponent<MeshCollider>();
+            if (!generatePhysics && meshCollider)
+                Destroy(meshCollider);
 
             //set the chunk position based on the job
-            chunkPosition = chunkJob.ChunkPos;
+            ChunkPosition = chunkJob.ChunkPos;
             
 
             //schedule a job to generate the chunk
@@ -76,7 +83,7 @@ namespace AugustEngine.Procedural.Chunks
 
         IEnumerator GenerateCoroutine(GenerateChunkJob chunkJob)
         {
-            var width = (int)chunkJob.ppu * (int)chunkJob.upc + 1;
+            var width = (int)chunkJob.ppc + 1;
 
             //allocate space for the vertices
             NativeArray<Vector3> verts = new NativeArray<Vector3>((width) * (width), Allocator.Persistent);
@@ -118,32 +125,47 @@ namespace AugustEngine.Procedural.Chunks
 
             _m.triangles = tris;
             filter.mesh = _m;
-            
+
+            //wait before recalculating normals
+
             filter.mesh.RecalculateNormals();
-            meshCollider.sharedMesh = filter.mesh;
+
+            if (generatePhysics)
+            {
+                meshCollider.sharedMesh = filter.mesh;
+            }
+            
 
 
 
-            state = ChunkState.Ready;
+            State = ChunkState.Ready;
         }
 
         public bool MarkForDestroy()
         {
-            if (state != ChunkState.Ready)
+            Debug.Log(this.gameObject.name + " marking for destroy, current state is " + State);
+            if (State != ChunkState.Ready)
             {
                 return false;
             }
-            state = ChunkState.Destroying;
+            State = ChunkState.Destroying;
             return true;
         }
 
-
+        /// <summary>
+        /// Marks this chunk is inactive and disables the gameobject
+        /// </summary>
+        public void Deactivate()
+        {
+            gameObject.SetActive(false);
+            State = ChunkState.Disabled;
+        }
         public struct GenerateChunkJob : IJob
         {
             public Vector2Int ChunkPos;
             public Vector3 _pos;
-            public uint ppu;
-            public uint upc;
+            public int ppc;
+            public int upc;
 
             int width;
 
@@ -160,8 +182,7 @@ namespace AugustEngine.Procedural.Chunks
             public void Execute()
             {
 
-                width = (int)ppu * (int)upc + 1;
-               
+                width = ppc + 1;
                 //calculate up front because GlobalOffset May Change
 
                 var _offset = new Vector2(
@@ -175,7 +196,7 @@ namespace AugustEngine.Procedural.Chunks
                     for (int y = 0; y < width; y++)
                     {
                         //calculate the point we are evaluating
-                        var _point = _offset + new Vector2(x / (float)ppu, y / (float)ppu);
+                        var _point = _offset + new Vector2(x * upc/ppc, y * upc/ppc);
 
 
                         //set the height of the vertex based on the provided location point

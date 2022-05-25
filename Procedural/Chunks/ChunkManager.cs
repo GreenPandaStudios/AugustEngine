@@ -61,17 +61,31 @@ namespace AugustEngine.Procedural.Chunks
             if (lastChunk != _c)
             {
                 lastChunk = _c;
+                GenereateRegion(CenterChunk);
+            }
+        }
 
-                //seed 5 chunks to generate
-                CreateNewChunk(CenterChunk);
-                CreateNewChunk(CenterChunk + new Vector2Int(-(int)chunkRadius, 0));
-                
-                CreateNewChunk(CenterChunk + new Vector2Int((int)chunkRadius, 0));
-                CreateNewChunk(CenterChunk + new Vector2Int(0,-(int)chunkRadius));
-                CreateNewChunk(CenterChunk + new Vector2Int(0, (int)chunkRadius));
-                
-                //let the chunks check if they need to despawn
-                CenterChunkChanged?.Invoke(_c);
+        private void GenereateRegion(Vector2Int center)
+        {
+           
+            //loop through the square that is 2 larger than the radius
+            for (int x = center.x - chunkRadius -  2 ; x < center.x + chunkRadius + 2; x++)
+            {
+                for (int y = center.y - chunkRadius- 2 ; y <center.y + chunkRadius + 2; y++)
+                {
+                    var _vec = new Vector2Int(x, y);
+                    if (InBounds(_vec))
+                    {
+                        //generate
+                        CreateNewChunk(_vec);
+                    }
+                    else
+                    {
+                        if (activeChunks.TryGetValue(_vec, out var _c)){
+                            _c.MarkForDestroy();
+                        }
+                    }
+                }
             }
         }
 
@@ -119,7 +133,7 @@ namespace AugustEngine.Procedural.Chunks
             ChunkStateChange(_c, _c.State);
 
             //listen for checking if chunks needs to be despawned
-            CenterChunkChanged += loc => CheckForDespawn(_c);
+           // CenterChunkChanged += loc => CheckForDespawn(_c);
             
             
             
@@ -138,25 +152,10 @@ namespace AugustEngine.Procedural.Chunks
             _c.Generate(_chunkJob);
 
             //Generate surrounding chunks too
-            StartCoroutine(GenerateSurroundingChunks(ChunkPosition));
+           // StartCoroutine(GenerateSurroundingChunks(ChunkPosition));
             return true;
         }
-        IEnumerator GenerateSurroundingChunks(Vector2Int ChunkPosition)
-        {
-            //if a chunk will propogate the generation, return control after that frame
-            //so the game doesn't hang. If it will not propogate, just continue
-
-           
-            if (CreateNewChunk(ChunkPosition + new Vector2Int(0, 1)))
-                yield return null;
-            if (CreateNewChunk(ChunkPosition + new Vector2Int(1, 0)))
-                yield return null;
-            if (CreateNewChunk(ChunkPosition + new Vector2Int(0, -1)))
-                yield return null;
-            if (CreateNewChunk(ChunkPosition + new Vector2Int(-1, 0)))
-                yield return null;
-
-        }
+       
 
         private void ChunkStateChange(Chunk caller, Chunk.ChunkState state)
         {
@@ -173,37 +172,20 @@ namespace AugustEngine.Procedural.Chunks
         }
 
 
-        public bool InBounds(Vector2Int myLoc)
-        {
+        public bool InBounds(Vector2Int myLoc){
 
-            //beyond the max radius
-            if (Mathf.Abs(lastChunk.x - myLoc.x) > chunkRadius ||
-                Mathf.Abs(lastChunk.y - myLoc.y) > chunkRadius)
-            {
-
-                return false;
-            }
-            //inside the min radius
-            else if (minChunkRadius > 0 && 
-                (Mathf.Abs(lastChunk.x - myLoc.x) < minChunkRadius &&
-                Mathf.Abs(lastChunk.y - myLoc.y) < minChunkRadius)){
-
-                return false;
-
-            }
+            var _dist = Vector2Int.Distance(myLoc, lastChunk);
+            if (_dist > chunkRadius) return false;
+            if (_dist < minChunkRadius) return false;
             return true;
         }
 
-        private void CheckForDespawn(Chunk _c)
-        {
-            if (!InBounds(_c.ChunkPosition)) _c.MarkForDestroy();
-        }
-
+      
         private void DestroyChunk(Chunk _chunk)
         {
             //clean up any data on this chunk
             _chunk.OnStateChange -= ChunkStateChange;
-            CenterChunkChanged -= loc => CheckForDespawn(_chunk);
+            
 
             activeChunks.Remove(_chunk.ChunkPosition);
             _chunk.Deactivate();

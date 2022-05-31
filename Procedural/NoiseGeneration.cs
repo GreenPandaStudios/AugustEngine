@@ -144,7 +144,7 @@ namespace AugustEngine.Procedural
             public float heightScale;
             public int seed;
             public bool useGlobalOffset;
-
+            public HeightMapNoise.HeightType noiseType;
         }
 
 

@@ -18,6 +18,8 @@ namespace AugustEngine.Procedural.Chunks
         public Action<Chunk, ChunkState> OnStateChange;
         private Vector2Int chunkPosition;
         public Vector2Int ChunkPosition { get => chunkPosition; private set { chunkPosition = value; } }
+       
+        public ChunkManager Manager;
 
         private ChunkState state = ChunkState.Disabled;
         public ChunkState State { get => state;
@@ -141,6 +143,10 @@ namespace AugustEngine.Procedural.Chunks
             State = ChunkState.Ready;
         }
 
+        /// <summary>
+        /// If allowed, marks this Chunks state as <see cref="ChunkState.Destroying"/>
+        /// </summary>
+        /// <returns>True if able to set</returns>
         public bool MarkForDestroy()
         {
             Debug.Log(this.gameObject.name + " marking for destroy, current state is " + State);
@@ -150,6 +156,80 @@ namespace AugustEngine.Procedural.Chunks
             }
             State = ChunkState.Destroying;
             return true;
+        }
+
+
+        /// <summary>
+        /// If this chunk contains a vertice at the provided position,
+        /// it will update the height and save the Height override
+        /// </summary>
+        /// <param name="pointPos"></param>
+        /// <param name="newHeight"></param>
+        /// <returns></returns>
+        public bool UpdateHeightAtPos(Vector2 pointPos, float newHeight, bool addNewHeight = false)
+        {
+            //check if there is a vertex point at this position
+            int i = GetVertexIndex(pointPos);
+            Debug.Log("Result: " + i);
+
+            if (i == -1) return false;
+
+            
+
+            var _verts = filter.mesh.vertices;
+            //otherwise, update
+            if (addNewHeight) newHeight += _verts[i].y;
+            _verts[i] = new Vector3(_verts[i].x, newHeight ,_verts[i].z);
+            filter.mesh.vertices = _verts;
+            filter.mesh.RecalculateNormals();
+            if (generatePhysics)
+                meshCollider.sharedMesh = filter.mesh;
+            //save the height
+            return HeightMapNoise.AddHeightOverride(new Vector2(_verts[i].x, _verts[i].z), newHeight);
+        }
+
+        /// <summary>
+        /// Returns the index of the point at the provided position, or -1 if there is none
+        /// </summary>
+        /// <param name="pointPos"></param>
+        /// <returns></returns>
+        public int GetVertexIndex(Vector2 pointPos)
+        {
+            if (!filter) return -1;
+            if (!filter.mesh) return -1;
+            var _verts = filter.mesh.vertices;
+            for (int i = 0; i < _verts.Length; i++)
+            {
+                var _v =  transform.TransformPoint(_verts[i]);
+                if (pointPos == new Vector2(_v.x , _v.z))
+                {
+                    return i;
+                }
+            }
+            return -1;
+            /*
+            Debug.Log(pointPos);
+            //base offset from origin
+            var _offset = new Vector2(
+                   (this.ChunkPosition.x * Manager.UnitsPerChunk) - transform.position.x,
+                   (this.ChunkPosition.y * Manager.UnitsPerChunk) - transform.position.z
+               );
+
+            pointPos -= _offset;
+            Debug.Log(pointPos);
+            pointPos /= Manager.UnitsPerPoint;
+              Debug.Log(pointPos);
+ 
+
+            int i = Manager.PointsPerChunk * -(int)pointPos.y + (int)pointPos.x;
+
+            Debug.Log("Result: " + i);
+
+            if (i > filter.mesh.vertexCount) return -1;
+            if (i < 0) return -1;
+            
+            return i;
+            */
         }
 
         /// <summary>
@@ -214,5 +294,11 @@ namespace AugustEngine.Procedural.Chunks
             }
             
         }
+
+
+     
+
+
+
     }
 }

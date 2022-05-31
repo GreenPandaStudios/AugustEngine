@@ -159,6 +159,35 @@ namespace AugustEngine.Vectors
                      v3.z * Vector3.ProjectOnPlane(cameraSpace.forward, Vector3.up).normalized
                     ;
         }
+        /// <summary>
+        /// Snaps the vector to the size of the grid
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="gridSize"></param>
+        /// <returns></returns>
+        public static Vector3 SnapToGrid(this Vector3 v, float gridSize, bool inGridSpace = false)
+        {
+            
+            return new Vector3(
+                Mathf.Round(v.x/gridSize),
+                Mathf.Round(v.y / gridSize),
+                Mathf.Round(v.z / gridSize) 
+                ) * (inGridSpace ? 1 : gridSize);
+        }
+        /// <summary>
+        /// Snaps the vector to the size of the grid
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="gridSize"></param>
+        /// <returns></returns>
+        public static Vector2 SnapToGrid(this Vector2 v, float gridSize, bool inGridSpace = false)
+        {
+
+            return new Vector2(
+                Mathf.Round(v.x / gridSize) ,
+                Mathf.Round(v.y / gridSize)
+                ) * (inGridSpace ? 1 : gridSize);
+        }
     }
 
    /// <summary>
@@ -430,6 +459,7 @@ namespace AugustEngine.Vectors
             return (int)Procedural.NoiseGeneration.SquirrelNoise((int)x + (int)y * (int)y + 31 * (int)x,
                 (long)x + (long)y);
         }
+
     
     }
 

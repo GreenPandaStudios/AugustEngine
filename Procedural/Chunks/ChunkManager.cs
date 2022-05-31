@@ -8,7 +8,7 @@ namespace AugustEngine.Procedural.Chunks
     public class ChunkManager : MonoBehaviour
     {
         [SerializeField] private int pointsPerChunk;
-        public int PointsPerUnit { get => pointsPerChunk; }
+        public int PointsPerChunk{ get => pointsPerChunk; }
         [SerializeField] private int unitsPerChunk;
         public int UnitsPerChunk { get => unitsPerChunk; }
         [SerializeField] NoiseGeneration.NoiseGenerator heightMap;
@@ -20,12 +20,16 @@ namespace AugustEngine.Procedural.Chunks
 
         private Dictionary<Vector2Int, Chunk> activeChunks;
         private Queue<Chunk> inactiveChunks;
-
+        public int UnitsPerPoint { get => UnitsPerChunk / PointsPerChunk; }
         public Action<Vector2Int> CenterChunkChanged;
         public Vector2Int CenterChunk
         {
-            get => new Vector2Int(((int)buildAround.position.x / UnitsPerChunk),
-           ((int)buildAround.position.z / UnitsPerChunk));
+            get
+            {
+                var _v = buildAround.position.SnapToGrid(UnitsPerChunk, true);
+                return new Vector2Int((int)_v.x, (int)_v.z);
+
+            }
         }
         private Vector2Int lastChunk = new Vector2Int(1000000, 0);
         private void OnEnable()
@@ -46,10 +50,27 @@ namespace AugustEngine.Procedural.Chunks
 
             activeChunks = new Dictionary<Vector2Int, Chunk>();
             inactiveChunks = new Queue<Chunk>();
-           
+
+            //StartCoroutine(TestHeightOverride());
         }
 
+        IEnumerator TestHeightOverride()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(5f);
+                var pointPos =
+                new Vector2((int)buildAround.position.x * UnitsPerPoint,
+                (int)buildAround.position.z * UnitsPerPoint / PointsPerChunk) / (UnitsPerChunk / PointsPerChunk);
 
+                if (activeChunks.TryGetValue(CenterChunk, out var _c))
+                {
+                    Debug.Log("Updating " + _c.gameObject.name);
+                    var b = _c.UpdateHeightAtPos(pointPos, 100, true);
+                    Debug.Log("Result: " +b);
+                }
+            }
+        }
 
         
         
@@ -61,7 +82,7 @@ namespace AugustEngine.Procedural.Chunks
             if (lastChunk != _c)
             {
                 lastChunk = _c;
-                GenereateRegion(CenterChunk);
+                GenereateRegion(_c);
             }
         }
 
@@ -124,7 +145,7 @@ namespace AugustEngine.Procedural.Chunks
                 _c = _go.AddComponent<Chunk>();
             }
 
-
+            _c.Manager = this;
             _c.generatePhysics = generatePhysics;
             _c.material = chunkMaterial;
             

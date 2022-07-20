@@ -82,14 +82,11 @@ namespace AugustEngine.Tweening
                 return null;
             }
 
-            foreach (TweenAction tween in tweens)
+            for (int i = 0; i < tweens.Length; i++)
             {
-                tween.onDone += () =>
-                {
-                    tweenAnimation.GetNext();
-                    tweenAnimation.Start();
-                };
-                tweenAnimation.queuedAnimations.Enqueue(tween.enumerator);
+                tweens[i].onDone += () => tweenAnimation.Start();
+
+                tweenAnimation.queuedAnimations.Enqueue(tweens[i].enumerator);
             }
             return tweenAnimation;
         }
@@ -129,7 +126,6 @@ namespace AugustEngine.Tweening
                         callback?.Invoke(end);
                         break;
                     }
-                    Debug.Log(curve.Evaluate(_c_t));
                     callback?.Invoke(Vector3.LerpUnclamped(start, end, ((_c_t / _max_t) - 1f) + curve.Evaluate(_c_t)));
                     yield return new WaitForEndOfFrame();
                 }
@@ -149,7 +145,7 @@ namespace AugustEngine.Tweening
                         callback?.Invoke(end);
                         break;
                     }
-                    Debug.Log(curve.Evaluate(_c_t));
+
                     callback?.Invoke(Quaternion.LerpUnclamped(start, end, ((_c_t / _max_t) - 1f) + curve.Evaluate(_c_t)));
                     yield return new WaitForEndOfFrame();
                 }
@@ -169,7 +165,7 @@ namespace AugustEngine.Tweening
                         callback?.Invoke(end);
                         break;
                     }
-                    Debug.Log(curve.Evaluate(_c_t));
+
                     callback?.Invoke(Mathf.LerpUnclamped(start, end, ((_c_t / _max_t) - 1f) + curve.Evaluate(_c_t)));
                     yield return new WaitForEndOfFrame();
                 }

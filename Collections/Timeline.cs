@@ -8,17 +8,25 @@ namespace AugustEngine.Collections
     /// A timeline is a special kind of list.
     /// It knows the number of Objects that occur before, at, or after any
     /// time on the timeline
+    /// K is the "time"
+    /// T is the "occurance type"
     /// </summary>
     public class Timeline<K, T> where K : System.IComparable
     {
-        private SortedList<K, TimelineNode<T>> _nodes;
+        private Dictionary<K, TimelineNode<T>> _nodes;
+        private List<K> sortedKeys = new List<K>();
+        /// <summary>
+        /// K is the "time"
+        /// T is the "occurance type"
+        /// </summary>
         public Timeline()
         {
-            _nodes = new SortedList<K, TimelineNode<T>>();
+            _nodes = new Dictionary<K, TimelineNode<T>>();
         }
         public int OccurancesUpTo(K time)
         {
-            return _nodes[closestElementBinarySearch(_nodes.Keys,time)].occurancesInclusive;
+            if (sortedKeys.Count == 0) return 0;
+            return _nodes[closestElementBinarySearch(sortedKeys, time)].occurancesInclusive;
         }
         public int OccurancesAfter(K time) {
             return _nodes.Count - OccurancesUpTo(time);
@@ -35,43 +43,38 @@ namespace AugustEngine.Collections
         {
             if (_nodes.ContainsKey(time))
             {
-                return _nodes[time].dataPoints[0];
+                return _nodes[time].Data;
             }
             return default(T);
         }
 
-        /// <summary>
-        /// Returns all elements
-        /// At this time
-        /// </summary>
-        /// <param name="time"></param>
-        /// <returns></returns>
-        public List<T> GetAll(K time)
-        {
-            if (_nodes.ContainsKey(time))
-            {
-                return _nodes[time].dataPoints;
-            }
-            return null;
-        }
+
 
         public void Add(K time, T occurance)
         {
-            //check if it contains something here already
-            if (!_nodes.ContainsKey(time))
+            _nodes[time] = new TimelineNode<T>(time, occurance);
+            sortedKeys.Clear();
+            foreach (K k in _nodes.Keys)
             {
-                _nodes[time] = new TimelineNode<T>(time);
+                sortedKeys.Add(k);
             }
-            _nodes[time].Add(occurance);
+            sortedKeys.Sort();
 
             //work your way down and increase all the occurances at each node above this one by 1
-            var _keys = _nodes.Keys;
-            for (int i = _keys.Count -1; i >= 0; i--)
-            {
+            for (int i = sortedKeys.Count -1; i >= 0; i--)
+            {   
+                
                 //increase this occurance
-                _nodes[_keys[i]].occurancesInclusive++;
+                _nodes[sortedKeys[i]].occurancesInclusive = _nodes[sortedKeys[i]].occurancesInclusive + 1;
                 //break if this is the one we just added
-                if (_nodes[_keys[i]].time.Equals(time)) break;
+                if (_nodes[sortedKeys[i]].Time.Equals(time)) {
+                    if (i-1 > 0)
+                    {
+                        _nodes[sortedKeys[i]].occurancesInclusive += _nodes[sortedKeys[i-1]].occurancesInclusive;
+                    }
+                    
+                    break;
+                }
             }
         }
 
@@ -80,21 +83,21 @@ namespace AugustEngine.Collections
         /// </summary>
         private class TimelineNode<T>
         {
-            public K time;
+            private K time;
+            private T data;
             public int occurancesInclusive;
-            public TimelineNode(K time)
+            public TimelineNode(K time, T data)
             {
                 this.time = time;
+                this.data = data;
             }
-            public List<T> dataPoints = new List<T>();
-            public void Add(T occurance)
-            {
-                dataPoints.Add(occurance);
-            }
+            public T Data { get => data; }
+            public K Time { get => time; }
         }
 
         private static K closestElementBinarySearch(IList<K> inputArray, K key)
         {
+            
             int min = 0;
             int max = inputArray.Count - 1;
             while (min <= max)

@@ -116,7 +116,7 @@ namespace AugustEngine.Collections
                     min = mid + 1;
                 }
             }
-            return inputArray[min];
+            return inputArray[Mathf.Clamp(min,0,inputArray.Count-1)];
         }
     }
 

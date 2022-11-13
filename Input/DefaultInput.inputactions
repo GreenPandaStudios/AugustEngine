@@ -143,7 +143,7 @@
                 {
                     "name": "",
                     "id": "8883188b-ce5b-42f7-a3a6-ed01821866c5",
-                    "path": "<Keyboard>/leftShift",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "KeyBoardAndMouse",
@@ -165,10 +165,21 @@
                 {
                     "name": "",
                     "id": "8853f962-e709-4634-a5c1-b9724992d399",
-                    "path": "",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "KeyBoardAndMouse",
+                    "action": "Button3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4f4b0e70-1449-4efc-901d-1dd2093d1f0b",
+                    "path": "<XInputController>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Xbox",
                     "action": "Button3",
                     "isComposite": false,
                     "isPartOfComposite": false

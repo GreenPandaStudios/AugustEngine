@@ -19,13 +19,20 @@ namespace AugustEngine.Input
         private void OnEnable()
         {
             inputActions = new DefaultInput();
+            ActiveInputs.Add(this);
+            if (!MapInputToDevice())
+            {
+                Debug.LogError("No device available for the input");
+                OnDisable();
+                return;
+            }
             inputActions.Enable();
             inputActions.InGame.Move.performed += obj => MoveVector.Value = obj.ReadValue<Vector2>();
             inputActions.InGame.Look.performed += obj => LookVector.Value = obj.ReadValue<Vector2>();
             inputActions.InGame.Button1.performed += obj => Button1.Value = obj.ReadValue<float>();
             inputActions.InGame.Button2.performed += obj => Button2.Value = obj.ReadValue<float>();
             inputActions.InGame.Button3.performed += obj => Button3.Value = obj.ReadValue<float>();
-
+            
         }
         private void OnDisable()
         {
@@ -35,8 +42,50 @@ namespace AugustEngine.Input
             inputActions.InGame.Button1.performed -= obj => Button1.Value = obj.ReadValue<float>();
             inputActions.InGame.Button2.performed -= obj => Button2.Value = obj.ReadValue<float>();
             inputActions.InGame.Button3.performed -= obj => Button3.Value = obj.ReadValue<float>();
+          
+            foreach (InputDevice inputDevice in inputActions.devices)
+            {
+                inputDevices.Remove(inputDevice);
+            }
+            ActiveInputs.Remove(this);
             inputActions = null;
         }
+
+        private static bool DeviceIsMapped(InputDevice device) { return inputDevices.Contains(device); }
+        private bool MapInputToDevice()
+        {
+            List<InputDevice> devices = new List<InputDevice>();
+            foreach (InputDevice device in InputSystem.devices)
+            {
+
+                if (!DeviceIsMapped(device))
+                {
+                    if (device is Gamepad && devices.Count == 0)
+                    {
+                        //only need one gamepad
+                        devices.Add(device);
+                        inputDevices.Add(device);
+                        break;
+
+                    }
+                    else if (device is not Gamepad)
+                    {
+                        //need all of anything else
+                        devices.Add(device);
+                        inputDevices.Add(device);
+                    }
+                }
+              
+            }
+            if (devices.Count > 0)
+            {
+                inputActions.devices = new UnityEngine.InputSystem.Utilities.ReadOnlyArray<InputDevice>(devices.ToArray());
+                return true;
+            }
+            return false;
+        }
+        private static List<InputDevice> inputDevices = new List<InputDevice>();
+        private static List<InputManager> ActiveInputs = new List<InputManager>();
 
     }
 }

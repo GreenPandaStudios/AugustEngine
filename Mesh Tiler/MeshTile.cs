@@ -24,6 +24,66 @@ namespace AugustEngine.MeshTiler
                                      BottomRight ? 1 : 0
                                    ).ToString();
             }
+            public override bool Equals(object obj)
+            {
+                if (obj is TileMatrix)
+                {
+                    return ((TileMatrix)obj).ToString() == this.ToString();
+                }
+                return false;
+            }
+
+            public static TileMatrix TopEdge
+            {
+                get{
+                    return new TileMatrix()
+                    {
+                        TopLeft = true,
+                        TopRight = true,
+                        BottomLeft = false,
+                        BottomRight = false,
+                    };
+                }
+            }
+            public static TileMatrix BottomEdge
+            {
+                get
+                {
+                    return new TileMatrix()
+                    {
+                        TopLeft = false,
+                        TopRight = false,
+                        BottomLeft = true,
+                        BottomRight = true,
+                    };
+                }
+            }
+            public static TileMatrix RightEdge
+            {
+                get
+                {
+                    return new TileMatrix()
+                    {
+                        TopLeft = false,
+                        TopRight = true,
+                        BottomLeft = false,
+                        BottomRight = true,
+                    };
+                }
+            }
+            public static TileMatrix LeftEdge
+            {
+                get
+                {
+                    return new TileMatrix()
+                    {
+                        TopLeft = true,
+                        TopRight = false,
+                        BottomLeft = true,
+                        BottomRight = false,
+                    };
+                }
+            }
         }
     }
 }

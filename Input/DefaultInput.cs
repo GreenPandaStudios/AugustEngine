@@ -73,6 +73,15 @@ namespace AugustEngine.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Button4"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""9cc802be-94ae-40f9-99a9-6386902632e8"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -284,6 +293,28 @@ namespace AugustEngine.Input
                     ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e368b75d-44af-4825-a045-4d4fba65cd47"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Xbox"",
+                    ""action"": ""Button4"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ffa29b93-1433-4bab-940f-7b587fe989d6"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyBoardAndMouse"",
+                    ""action"": ""Button4"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -353,6 +384,7 @@ namespace AugustEngine.Input
             m_InGame_Button1 = m_InGame.FindAction("Button1", throwIfNotFound: true);
             m_InGame_Button2 = m_InGame.FindAction("Button2", throwIfNotFound: true);
             m_InGame_Button3 = m_InGame.FindAction("Button3", throwIfNotFound: true);
+            m_InGame_Button4 = m_InGame.FindAction("Button4", throwIfNotFound: true);
             // Menu
             m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
             m_Menu_Newaction = m_Menu.FindAction("New action", throwIfNotFound: true);
@@ -422,6 +454,7 @@ namespace AugustEngine.Input
         private readonly InputAction m_InGame_Button1;
         private readonly InputAction m_InGame_Button2;
         private readonly InputAction m_InGame_Button3;
+        private readonly InputAction m_InGame_Button4;
         public struct InGameActions
         {
             private @DefaultInput m_Wrapper;
@@ -431,6 +464,7 @@ namespace AugustEngine.Input
             public InputAction @Button1 => m_Wrapper.m_InGame_Button1;
             public InputAction @Button2 => m_Wrapper.m_InGame_Button2;
             public InputAction @Button3 => m_Wrapper.m_InGame_Button3;
+            public InputAction @Button4 => m_Wrapper.m_InGame_Button4;
             public InputActionMap Get() { return m_Wrapper.m_InGame; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -455,6 +489,9 @@ namespace AugustEngine.Input
                 @Button3.started += instance.OnButton3;
                 @Button3.performed += instance.OnButton3;
                 @Button3.canceled += instance.OnButton3;
+                @Button4.started += instance.OnButton4;
+                @Button4.performed += instance.OnButton4;
+                @Button4.canceled += instance.OnButton4;
             }
 
             private void UnregisterCallbacks(IInGameActions instance)
@@ -474,6 +511,9 @@ namespace AugustEngine.Input
                 @Button3.started -= instance.OnButton3;
                 @Button3.performed -= instance.OnButton3;
                 @Button3.canceled -= instance.OnButton3;
+                @Button4.started -= instance.OnButton4;
+                @Button4.performed -= instance.OnButton4;
+                @Button4.canceled -= instance.OnButton4;
             }
 
             public void RemoveCallbacks(IInGameActions instance)
@@ -562,6 +602,7 @@ namespace AugustEngine.Input
             void OnButton1(InputAction.CallbackContext context);
             void OnButton2(InputAction.CallbackContext context);
             void OnButton3(InputAction.CallbackContext context);
+            void OnButton4(InputAction.CallbackContext context);
         }
         public interface IMenuActions
         {

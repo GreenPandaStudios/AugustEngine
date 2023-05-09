@@ -49,6 +49,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Button4",
+                    "type": "PassThrough",
+                    "id": "9cc802be-94ae-40f9-99a9-6386902632e8",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -258,6 +267,28 @@
                     "processors": "ScaleVector2(x=0.1,y=0.1)",
                     "groups": "KeyBoardAndMouse",
                     "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e368b75d-44af-4825-a045-4d4fba65cd47",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Xbox",
+                    "action": "Button4",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ffa29b93-1433-4bab-940f-7b587fe989d6",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyBoardAndMouse",
+                    "action": "Button4",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

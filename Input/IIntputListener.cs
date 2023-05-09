@@ -3,7 +3,7 @@ namespace AugustEngine.Input
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
-
+    [System.Obsolete("The Input Manager pattern is deprecated. Use Input Channels instead")]
     public interface IIntputListener
     {
         public void Register(InputManager im);

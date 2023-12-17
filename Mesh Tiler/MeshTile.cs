@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 namespace AugustEngine.MeshTiler
 {
@@ -31,6 +32,11 @@ namespace AugustEngine.MeshTiler
                     return ((TileMatrix)obj).ToString() == this.ToString();
                 }
                 return false;
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(TopLeft, TopRight, BottomLeft, BottomRight);
             }
 
             public static TileMatrix TopEdge

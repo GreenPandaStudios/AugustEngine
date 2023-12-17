@@ -13,16 +13,16 @@ namespace AugustEngine.Splitscreen
     public class SplitscreenCam : MonoBehaviour
     {
         private static List<SplitscreenCam> cameras = new List<SplitscreenCam>();
-        private Camera camera;
+        private Camera mainCamera;
         /// <summary>
         /// The camera controlled by this SplitscreenCamera
         /// </summary>
         public Camera Camera { get {
-                if (camera == null)
+                if (mainCamera == null)
                 {
-                    camera = GetComponent<Camera>();
+                    mainCamera = GetComponent<Camera>();
                 }
-                return camera;
+                return mainCamera;
                }
         }
         private void Awake()

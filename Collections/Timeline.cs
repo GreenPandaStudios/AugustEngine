@@ -13,7 +13,7 @@ namespace AugustEngine.Collections
     /// </summary>
     public class Timeline<K, T> where K : System.IComparable
     {
-        private Dictionary<K, TimelineNode<T>> _nodes;
+        private Dictionary<K, TimelineNode> _nodes;
         private List<K> sortedKeys = new List<K>();
         /// <summary>
         /// K is the "time"
@@ -21,7 +21,7 @@ namespace AugustEngine.Collections
         /// </summary>
         public Timeline()
         {
-            _nodes = new Dictionary<K, TimelineNode<T>>();
+            _nodes = new Dictionary<K, TimelineNode>();
         }
         public int OccurancesUpTo(K time)
         {
@@ -52,7 +52,7 @@ namespace AugustEngine.Collections
 
         public void Add(K time, T occurance)
         {
-            _nodes[time] = new TimelineNode<T>(time, occurance);
+            _nodes[time] = new TimelineNode(time, occurance);
             sortedKeys.Clear();
             foreach (K k in _nodes.Keys)
             {
@@ -81,7 +81,7 @@ namespace AugustEngine.Collections
         /// <summary>
         /// The node that occurs at a given time
         /// </summary>
-        private class TimelineNode<T>
+        private class TimelineNode
         {
             private K time;
             private T data;

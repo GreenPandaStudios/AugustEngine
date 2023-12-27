@@ -1,0 +1,19 @@
+{
+    "name": "com.augustmiller.august-engine",
+    "displayName": "August Engine",
+    "version": "1.0.0",
+    "unity": "2022.3",
+    "licensesUrl": "See LICENSE.md",
+    "author": {
+     "name": "August Miller",
+     "email": "augustamiller77@gmail.com"
+    },
+    "description": "Basic utility scripts that I import into all projects.",
+    "dependencies": {
+    },
+    "keywords": [
+     "Utility",
+     "Tool",
+     "August"
+    ]
+   }

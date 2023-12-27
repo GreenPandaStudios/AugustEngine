@@ -9,7 +9,7 @@ namespace AugustEngine.Input
         [SerializeField] PlayerInput playerInput;
 
         // Start is called before the first frame update
-        void OnEnable()
+        void Awake()
         {
             channel.ConstructEvents(playerInput.currentActionMap);
         }

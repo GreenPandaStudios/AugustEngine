@@ -13,9 +13,9 @@ namespace AugustEngine.Characters
     public class CharacterController2D
         : MonoBehaviour
     {
-        [SerializeField] private InputChannel inputChannel;
-        [SerializeField] private TargetVelocitySetter targetVelocitySetter;
-        [SerializeField] private GroundDetector groundDetector;
+        [SerializeField] protected InputChannel inputChannel;
+        [SerializeField] protected TargetVelocitySetter targetVelocitySetter;
+        [SerializeField] protected GroundDetector groundDetector;
         [SerializeField] CharacterMovementSettings movementSettings;
 
 
@@ -31,28 +31,9 @@ namespace AugustEngine.Characters
         #region Input Events
         private Vector2 _moveStick = new();
         private void HandleMoveStick(object val) => _moveStick = (Vector2)val;
-        private void HandleButton1(object jumpDown)
-        {
-            if ((float)jumpDown > 0.5f)
-            {
-                Jump();
-            }
-        }
-        private void HandleButton2(object value)
-        {
-            if ((float)value > 0.5f)
-            {
-                Button2();
-            }
-
-        }
-        private void HandleButton3(object value)
-        {
-            if ((float)value > 0.5f)
-            {
-                Button3();
-            }
-        }
+        private void HandleButton1(object jumpDown) => Jump((float)jumpDown > 0.5f);
+        private void HandleButton2(object value) => Button2((float)value > 0.5f);
+        private void HandleButton3(object value) => Button3((float)value > 0.5f);
         #endregion
 
         #region Event Registration
@@ -107,9 +88,9 @@ namespace AugustEngine.Characters
             targetVelocitySetter.TargetVelocity = moveStick * movementSettings.maxSpeed;
 
         }
-        protected virtual void Jump()
+        protected virtual void Jump(bool buttonDown)
         {
-            if (groundDetector.Grounded)
+            if (buttonDown && groundDetector.Grounded)
             {
                 targetVelocitySetter.RB.velocity = new Vector3(
                     targetVelocitySetter.RB.velocity.x,
@@ -117,15 +98,20 @@ namespace AugustEngine.Characters
                     targetVelocitySetter.RB.velocity.z
 
                     );
+                if (groundDetector.Hit.rigidbody != null )
+                {
+                    groundDetector.Hit.rigidbody.AddForceAtPosition(movementSettings.maxJump * Vector3.down * targetVelocitySetter.RB.mass,groundDetector.Hit.point,ForceMode.Impulse);
+                }
+                
             }
         }
 
 
-        protected virtual void Button1() { }
+        protected virtual void Button1(bool buttonDown) { }
 
-        protected void Button2() { }
+        protected void Button2(bool buttonDown) { }
 
-        protected void Button3() { }
+        protected void Button3(bool buttonDown) { }
         #endregion
 
     }

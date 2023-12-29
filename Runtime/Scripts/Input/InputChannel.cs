@@ -10,7 +10,7 @@ namespace AugustEngine.Input
     public class InputChannel : ScriptableObject
     {
         private Dictionary<string, System.Action<object>> inputEvents;
-        private Dictionary<string, System.Action<object>> _registrationQueue;
+        private Dictionary<string, List<System.Action<object>>> _registrationQueue;
 
 
         public void ConstructEvents(UnityEngine.InputSystem.InputActionMap inputActions)
@@ -34,7 +34,12 @@ namespace AugustEngine.Input
             if (_registrationQueue != null && _registrationQueue.Count > 0) {
                 foreach (string action in _registrationQueue.Keys)
                 {
-                    RegisterCallback(action, _registrationQueue[action]);
+                    List < System.Action<object> > callbacks = _registrationQueue[action];
+                    foreach (System.Action<object> callback in callbacks)
+                    {
+                        RegisterCallback(action, callback);
+                    }
+                    
                 }
                 _registrationQueue = new();
             }
@@ -63,7 +68,14 @@ namespace AugustEngine.Input
             {
                 _registrationQueue = new();
             }
-            _registrationQueue.Add(actionName, callBack);
+
+            if (_registrationQueue.ContainsKey(actionName))
+            {
+                _registrationQueue[actionName].Add(callBack);
+                return;
+            }
+            _registrationQueue.Add(actionName, new List<System.Action<object>>{ callBack });
+
         }
 
         public void UnregisterCallback(string actionName, System.Action<object> callBack)

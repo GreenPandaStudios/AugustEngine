@@ -16,11 +16,11 @@ namespace AugustEngine.Characters
         [SerializeField] protected InputChannel inputChannel;
         [SerializeField] protected TargetVelocitySetter targetVelocitySetter;
         [SerializeField] protected GroundDetector groundDetector;
-        [SerializeField] CharacterMovementSettings movementSettings;
+        [SerializeField] protected CharacterMovementSettings movementSettings;
 
 
         [Serializable]
-        internal class CharacterMovementSettings
+        protected class CharacterMovementSettings
         {
             public float maxSpeed;
             public float groundedAcceleartionForce;
@@ -40,9 +40,13 @@ namespace AugustEngine.Characters
         private void RegisterAll()
         {
             inputChannel.RegisterCallback("Move", HandleMoveStick);
+            HandleMoveStick(Vector2.zero);
             inputChannel.RegisterCallback("Button1", HandleButton1);
+            HandleButton1(0f);
             inputChannel.RegisterCallback("Button2", HandleButton2);
+            HandleButton2(0f);
             inputChannel.RegisterCallback("Button3", HandleButton3);
+            HandleButton3(0f);
             FixedUpdateEvent.OnFixedUpdate += FixedUpdateLoop;
         }
 
@@ -90,19 +94,21 @@ namespace AugustEngine.Characters
         }
         protected virtual void Jump(bool buttonDown)
         {
-            if (buttonDown && groundDetector.Grounded)
+            if (buttonDown)
             {
-                targetVelocitySetter.RB.velocity = new Vector3(
-                    targetVelocitySetter.RB.velocity.x,
-                    movementSettings.maxJump,
-                    targetVelocitySetter.RB.velocity.z
-
-                    );
-                if (groundDetector.Hit.rigidbody != null )
+                if (groundDetector.Grounded)
                 {
-                    groundDetector.Hit.rigidbody.AddForceAtPosition(movementSettings.maxJump * Vector3.down * targetVelocitySetter.RB.mass,groundDetector.Hit.point,ForceMode.Impulse);
+                    targetVelocitySetter.RB.velocity = new Vector3(
+                        targetVelocitySetter.RB.velocity.x,
+                        movementSettings.maxJump,
+                        targetVelocitySetter.RB.velocity.z
+
+                        );
+                    if (groundDetector.Hit.rigidbody != null)
+                    {
+                        groundDetector.Hit.rigidbody.AddForceAtPosition(movementSettings.maxJump * Vector3.down * targetVelocitySetter.RB.mass, groundDetector.Hit.point, ForceMode.Impulse);
+                    }
                 }
-                
             }
         }
 

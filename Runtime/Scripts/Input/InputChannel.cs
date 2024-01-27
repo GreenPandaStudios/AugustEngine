@@ -7,6 +7,7 @@ namespace AugustEngine.Input
     /// A Channel to broadcast input events. See <see cref="InputBroadcaster"/> to broadcast these events in a scene
     /// </summary>
     [CreateAssetMenu(fileName = "Input Channel 1", menuName = "August Engine/Input/Input Channel", order = 1)]
+    [System.Serializable]
     public class InputChannel : ScriptableObject
     {
         private Dictionary<string, System.Action<object>> inputEvents;
@@ -60,7 +61,6 @@ namespace AugustEngine.Input
             }
             Debug.LogError($"Tried to register an nonexistant action, {actionName}");
         }
-
 
         private void QueueEvent(string actionName, System.Action<object> callBack)
         {

@@ -7,38 +7,71 @@
 
     public class Spawner : SpawnerBase
     {
-
-
-        public override void Load()
+        [SerializeField] ParticleSystem despawnParticles;
+        protected override void Load()
         {
-            //load the object into memory
-            spawnedObject = Instantiate(spawnedObject, transform.position, Quaternion.identity, null);
-            spawnedObject.SetActive(false);
+            // load all of the objects into memory
+            for (int i = 0; i < poolSize; i++)
+            {
+                SpawnableObject _spawnedObject = Instantiate(spawnedObject.Prefab, transform.position, Quaternion.identity, transform).GetComponent<SpawnableObject>();
+                _spawnedObject.gameObject.SetActive(false);
+                _spawnedObject.gameObject.transform.position = Vector3.zero;
+                _spawnedObject.gameObject.transform.rotation = Quaternion.identity;
+                _spawnedObject.Spawner = this;
+                objectPool.Push(_spawnedObject);
+               
+            }
         }
 
         /// <summary>
         /// Spawns an instantiated game object
         /// </summary>
-        public override void Spawn()
+        protected override SpawnableObject Spawn(Vector3 postion, Quaternion rotation = new Quaternion())
         {
-            //(re)activate the object and move it back to the spawner
-            spawnedObject.transform.position = transform.position;
-            spawnedObject.transform.rotation = Quaternion.identity;
+            // See if we need to instantiate more
+            if (objectPool.Count == 0)
+            {
+                Load();
+            }
 
-            spawnedObject.SetActive(true);
+            SpawnableObject spawnable = objectPool.Pop();
+
+
+
+            //(re)activate the object and move it back to the spawner
+            spawnable.gameObject.transform.position = postion;
+            spawnable.gameObject.transform.rotation = rotation;
+
+            spawnable.gameObject.SetActive(true);
 
             //send out the OnSpawn event if it is not empty
-            OnSpawn?.Invoke();
+            OnSpawn?.Invoke(spawnable);
+            return spawnable;
         }
+
         /// <summary>
         /// despawns an instantiated game object
         /// </summary>
-        public override void Despawn()
+        protected override void Despawn(SpawnableObject spawnable)
         {
-            //deactivate the object and send out the despawn event
-            spawnedObject.SetActive(false);
+            // deactivate the object and send out the despawn event
+            spawnable.gameObject.SetActive(false);
 
-            OnDespawn?.Invoke();
+            OnDespawn?.Invoke(spawnable);
+
+            if (despawnParticles != null)
+            {
+                despawnParticles.transform.position = spawnable.transform.position;
+                despawnParticles.Play();
+            }
+
+            spawnable.gameObject.transform.position = Vector3.zero;
+            spawnable.gameObject.transform.rotation = Quaternion.identity;
+
+            // Just in case we got mixed up
+            spawnable.Spawner = this;
+
+           
         }
     }
 }

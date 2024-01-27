@@ -14,11 +14,16 @@ namespace AugustEngine.Physics.Gravity
         Transform endCast;
         [SerializeField]
         [Tooltip("What layer is the ground")]
-        LayerMask groundLayer;
+        public LayerMask groundLayer;
 
         public Action<bool> OnGroundedChanged;
         private bool grounded = false;
         private RaycastHit hit;
+
+
+        private Vector3 direction;
+        float distance;
+
 
         /// <summary>
         /// The most recent hit
@@ -39,6 +44,9 @@ namespace AugustEngine.Physics.Gravity
         }
         private void OnEnable()
         {
+            direction = startCast.position.To(endCast.position);
+            distance = direction.magnitude;
+
             FixedUpdateEvent.Initialize();
             FixedUpdateEvent.OnFixedUpdate += GroundDetect;
         }
@@ -49,7 +57,7 @@ namespace AugustEngine.Physics.Gravity
         }
         private void GroundDetect()
         {
-            Grounded = Physics.Raycast(startCast.position, startCast.position.To(endCast.position), out hit, groundLayer);
+            Grounded = Physics.Raycast(startCast.position, direction, out hit, distance, groundLayer);
         }
     }
 }

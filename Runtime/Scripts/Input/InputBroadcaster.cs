@@ -13,5 +13,15 @@ namespace AugustEngine.Input
         {
             channel.ConstructEvents(playerInput.currentActionMap);
         }
+
+        /// <summary>
+        /// Componentless constructor
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="playerInput"></param>
+        public static void Initialize(InputChannel channel, PlayerInput playerInput)
+        {
+            channel.ConstructEvents(playerInput.currentActionMap);
+        }
     }
 }

@@ -1,3 +1,4 @@
+using BirdBall.Characters.PlayerManagment;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
@@ -11,6 +12,7 @@ namespace AugustEngine.Input
     {
         [SerializeField] GameObject playerPrefab;
         [SerializeField] InputChannel[] playerInputChannels;
+        [SerializeField] PlayerDataMatrix playerDataMatrix;
         [SerializeField] bool spawnOnJoin = true;
 
         public int MaxPlayers { get => playerInputChannels.Length; }
@@ -53,7 +55,9 @@ namespace AugustEngine.Input
             
             foreach (INeedInputChannel component in components)
             {
-                component.SetInputChannel(playerInputChannels[playerIndex]);
+                InputChannel inputChannel = playerInputChannels[playerIndex];
+
+                component.SetInputChannel(inputChannel, playerDataMatrix.GetPlayerData(inputChannel));
             }
             _newPlayer.SetActive(true);
             
@@ -141,7 +145,7 @@ namespace AugustEngine.Input
             /// Called by <see cref="CreatePlayer(PlayerInput)"/>
             /// </summary>
             /// <param name="inputChannel"></param>
-            public void SetInputChannel(InputChannel inputChannel);
+            public void SetInputChannel(InputChannel inputChannel, PlayerDataMatrix.PlayerData playerData = null);
         }
     }
 }

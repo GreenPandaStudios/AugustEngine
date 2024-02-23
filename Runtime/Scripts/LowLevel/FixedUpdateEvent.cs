@@ -10,8 +10,6 @@ namespace AugustEngine.LowLevel
         /// </summary>
         public static Action OnFixedUpdate;
 
-
-
         // Update is called once per frame
         void FixedUpdate() => OnFixedUpdate?.Invoke();
     }

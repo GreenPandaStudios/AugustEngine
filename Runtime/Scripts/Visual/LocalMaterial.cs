@@ -51,5 +51,16 @@ namespace AugustEngine.Visual
                 renderer.material = material;
             }
         }
+
+        public bool Visible
+        {
+            set
+            {
+                foreach (Renderer renderer in meshRenderers)
+                {
+                    renderer.enabled = value;
+                }
+            }
+        }
     }
 }
